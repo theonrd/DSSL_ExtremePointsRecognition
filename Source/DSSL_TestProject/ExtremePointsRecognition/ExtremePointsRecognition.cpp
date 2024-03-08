@@ -5,7 +5,7 @@
 #include "SkeletalRenderPublic.h"
 #include "Rendering/SkeletalMeshRenderData.h"
 
-TArray<FVector3f> UExtremePointsRecognition::GetMeshVertices(USkeletalMeshComponent* MeshComponent, int32 LODIndex)
+TArray<FVector3f> UExtremePointsRecognition::GetSkeletalMeshVertices(USkeletalMeshComponent* MeshComponent, int32 LODIndex)
 {
 	TArray<FVector3f> Result;
 
@@ -29,7 +29,7 @@ TArray<FVector3f> UExtremePointsRecognition::GetMeshVertices(USkeletalMeshCompon
 	return Result;
 }
 
-TArray<FVector2D> UExtremePointsRecognition::FindExtremeVertices(APlayerController* LocalPlayerController, TArray<FVector> Vertices)
+TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> Vertices)
 {
 	TOptional<FVector2D> Left, Right, Top, Bottom;
 
@@ -70,8 +70,7 @@ TArray<FVector2D> UExtremePointsRecognition::FindExtremeVertices(APlayerControll
 			Bottom = ScreenLocation;
 		}
 	}
-
-	// Return scaled value with "real" pixels.
+	
 	return {Left.GetValue(), Right.GetValue(), Top.GetValue(), Bottom.GetValue()};
 }
 
