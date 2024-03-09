@@ -31,8 +31,6 @@ TArray<FVector3f> UExtremePointsRecognition::GetSkeletalMeshVertices(USkeletalMe
 
 TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> Vertices)
 {
-	TOptional<FVector2D> Left, Right, Top, Bottom;
-
 	if (Vertices.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't find extreme vertices with empty vertices array!"))
@@ -42,36 +40,45 @@ TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APla
 	int32 ViewportSizeX, ViewportSizeY;
 	LocalPlayerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
 
+	const FVector2D HalfViewportSize(ViewportSizeX / 2, ViewportSizeY / 2);
+	
+	// Initialize vertices with "worst" values.
+	constexpr double DoubleNegativeMax = DBL_MAX * -1;
+	FVector2D Left(DBL_MAX);
+	FVector2D Right(DoubleNegativeMax);
+	FVector2D Top(DBL_MAX);
+	FVector2D Bottom(DoubleNegativeMax);
+	
 	for (const auto& Vert : Vertices)
 	{
 		FVector2D ScreenLocation;
 		LocalPlayerController->ProjectWorldLocationToScreen(Vert, ScreenLocation, true);
 
 		// Make coordinates center-relative for convenient resolution scaling.
-		ScreenLocation -= FVector2D(ViewportSizeX / 2, ViewportSizeY / 2);
+		ScreenLocation -= HalfViewportSize;
 
-		if (!Left.IsSet() || ScreenLocation.X < Left.GetValue().X)
+		if (ScreenLocation.X < Left.X)
 		{
 			Left = ScreenLocation;
 		}
 
-		if (!Right.IsSet() || ScreenLocation.X > Right.GetValue().X)
+		if (ScreenLocation.X > Right.X)
 		{
 			Right = ScreenLocation;
 		}
 
-		if (!Top.IsSet() || ScreenLocation.Y < Top.GetValue().Y)
+		if (ScreenLocation.Y < Top.Y)
 		{
 			Top = ScreenLocation;
 		}
 
-		if (!Bottom.IsSet() || ScreenLocation.Y > Bottom.GetValue().Y)
+		if (ScreenLocation.Y > Bottom.Y)
 		{
 			Bottom = ScreenLocation;
 		}
 	}
 	
-	return {Left.GetValue(), Right.GetValue(), Top.GetValue(), Bottom.GetValue()};
+	return {Left, Right, Top, Bottom};
 }
 
 void UExtremePointsRecognition::GetLocalVerticesWithCpuSkinning(TArray<FVector3f>& OutVertices,
