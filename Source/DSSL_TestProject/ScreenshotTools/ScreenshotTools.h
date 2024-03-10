@@ -15,6 +15,18 @@ class DSSL_TESTPROJECT_API UScreenshotTools : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Screenshot Tools")
-	static void MakeScreenshot(FString ProjectRelativeDirectory, FString FileName, int32 ResolutionX = 1920, int32 ResolutionY = 1080, float ResolutionScale = 1);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Screenshot Tools")
+	static void OverlayPointsToRenderTarget(UObject* WorldContextObject, UTextureRenderTarget2D* RT,
+		TArray<FVector2D> const& Vertices, float PointSize, UTexture* PointTexture, FLinearColor Color);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Screenshot Tools")
+	static void TakeRenderTargetShot(UObject* WorldContextObject, UTextureRenderTarget2D* RT,
+		const FString ProjectRelativeDirectory, const FString FileName);
+
+	/**
+	 * Delete selected directory inside project. Be careful.
+	 * @param RelativeDirectory Project Relative path
+	 */
+	UFUNCTION(BlueprintCallable)
+	static void DeleteDirectory(FString RelativeDirectory);
 };
