@@ -28,7 +28,7 @@ public:
 	 * Find extreme points and project it to screen.
 	 * @param LocalPlayerController 
 	 * @param Vertices All vertices to check
-	 * @return Array of four screen-relative 2D points with extreme points (left, right, top, bottom)
+	 * @return Array of four screen-center-relative 2D points with extreme points (left, right, top, bottom)
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Extreme Points Recognition")
 	static TArray<FVector2D> ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> Vertices);

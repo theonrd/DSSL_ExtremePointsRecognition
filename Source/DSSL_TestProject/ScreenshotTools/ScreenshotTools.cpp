@@ -2,7 +2,6 @@
 
 #include "ScreenshotTools.h"
 
-#include "FileHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Engine/Canvas.h"
 #include "Kismet/KismetRenderingLibrary.h"
@@ -10,6 +9,12 @@
 void UScreenshotTools::OverlayPointsToRenderTarget(UObject* WorldContextObject, UTextureRenderTarget2D* RT,
 	TArray<FVector2D> const& Vertices, const float PointSize, UTexture* PointTexture, const FLinearColor Color)
 {
+	if (RT == nullptr || PointTexture == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't overlay points on render target without render target and texture!"))
+		return;
+	}
+	
 	// Initialize RT Canvas.
 	UCanvas* RenderCanvas;
 	FVector2D ScreenSize;
