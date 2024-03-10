@@ -15,8 +15,8 @@ The screenshots taken will be saved in **DSSL_ExtremePoints/Screenshots/**
 
 Some examples:
 
-![Example Screenshot](Screenshots/3.png)
+![Example Screenshot](ReadmeScreenshots/3.png)
 
-![Example Screenshot](Screenshots/15.png)
+![Example Screenshot](ReadmeScreenshots/15.png)
 
-![Example Screenshot](Screenshots/28.png)
+![Example Screenshot](ReadmeScreenshots/27.png)
