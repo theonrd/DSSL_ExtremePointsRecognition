@@ -22,13 +22,14 @@ void UScreenshotTools::OverlayPointsToRenderTarget(UObject* WorldContextObject, 
 	UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(WorldContextObject, RT, RenderCanvas, ScreenSize, Context);
 
 	const float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(WorldContextObject);
+	
 	const FVector2D HalfScreenSize = ScreenSize / 2;
+	const FVector2D HalfPointSize(PointSize / 2);
 
 	for (FVector2D const& Vertex : Vertices)
 	{
 		const FVector2D RtScaledVertex = (Vertex / ViewportScale) + HalfScreenSize;
-
-		const FVector2D ImageAdjustedRtVertex = RtScaledVertex - (PointSize / 2);
+		const FVector2D ImageAdjustedRtVertex = RtScaledVertex - HalfPointSize;
 
 		RenderCanvas->K2_DrawTexture(PointTexture, ImageAdjustedRtVertex, FVector2D(PointSize),
 			FVector2D::ZeroVector, FVector2D::UnitVector, Color);

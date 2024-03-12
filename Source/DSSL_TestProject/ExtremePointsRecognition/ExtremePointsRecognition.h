@@ -17,12 +17,13 @@ class DSSL_TESTPROJECT_API UExtremePointsRecognition : public UBlueprintFunction
 public:
 	/**
 	 * Get world-space coordinates with all vertices of skeletal mesh.
+	 * @param OutVertices Array of world coordinates of each vertex.
 	 * @param MeshComponent Mesh to use
 	 * @param LODIndex
-	 * @return Array of world coordinates of each vert.
+	 * @return True if success
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Extreme Points Recognition")
-	static TArray<FVector3f> GetSkeletalMeshVertices(USkeletalMeshComponent* MeshComponent, int32 LODIndex);
+	static bool GetSkeletalMeshVertices(TArray<FVector3f>& OutVertices, USkeletalMeshComponent* MeshComponent, int32 LODIndex);
 
 	/**
 	 * Find extreme points and project it to screen.
@@ -31,7 +32,7 @@ public:
 	 * @return Array of four screen-center-relative 2D points with extreme points (left, right, top, bottom)
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Extreme Points Recognition")
-	static TArray<FVector2D> ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> Vertices);
+	static TArray<FVector2D> ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> const& Vertices);
 
 private:
 	static void GetLocalVerticesWithCpuSkinning(TArray<FVector3f>& OutVertices, const USkeletalMeshComponent* MeshComponent, int32 LODIndex);

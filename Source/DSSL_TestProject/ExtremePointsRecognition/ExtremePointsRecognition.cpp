@@ -5,31 +5,31 @@
 #include "SkeletalRenderPublic.h"
 #include "Rendering/SkeletalMeshRenderData.h"
 
-TArray<FVector3f> UExtremePointsRecognition::GetSkeletalMeshVertices(USkeletalMeshComponent* MeshComponent, int32 LODIndex)
+bool UExtremePointsRecognition::GetSkeletalMeshVertices(TArray<FVector3f>& OutVertices, USkeletalMeshComponent* MeshComponent, const int32 LODIndex)
 {
-	TArray<FVector3f> Result;
+	OutVertices.Empty();
 
 	if (!IsValid(MeshComponent))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't get mesh vertices because mesh is invalid!"))
-		return Result;
+		return false;
 	}
 	
 	if (MeshComponent->GetCPUSkinningEnabled())
 	{
-		GetLocalVerticesWithCpuSkinning(Result, MeshComponent, LODIndex);
+		GetLocalVerticesWithCpuSkinning(OutVertices, MeshComponent, LODIndex);
 	}
 	else
 	{
-		GetLocalVerticesWithGpuSkinning(Result, MeshComponent, LODIndex);
+		GetLocalVerticesWithGpuSkinning(OutVertices, MeshComponent, LODIndex);
 	}
 
-	TransformLocalToWorld(Result, MeshComponent);
+	TransformLocalToWorld(OutVertices, MeshComponent);
 
-	return Result;
+	return true;
 }
 
-TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> Vertices)
+TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APlayerController* LocalPlayerController, TArray<FVector> const& Vertices)
 {
 	if (Vertices.IsEmpty())
 	{
@@ -49,7 +49,7 @@ TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APla
 	FVector2D Top(DBL_MAX);
 	FVector2D Bottom(DoubleNegativeMax);
 	
-	for (const auto& Vert : Vertices)
+	for (auto const& Vert : Vertices)
 	{
 		FVector2D ScreenLocation;
 		LocalPlayerController->ProjectWorldLocationToScreen(Vert, ScreenLocation, true);
@@ -78,7 +78,7 @@ TArray<FVector2D> UExtremePointsRecognition::ProjectExtremeVerticesToScreen(APla
 		}
 	}
 	
-	return {Left, Right, Top, Bottom};
+	return {std::move(Left), std::move(Right), std::move(Top), std::move(Bottom)};
 }
 
 void UExtremePointsRecognition::GetLocalVerticesWithCpuSkinning(TArray<FVector3f>& OutVertices,
@@ -86,8 +86,7 @@ void UExtremePointsRecognition::GetLocalVerticesWithCpuSkinning(TArray<FVector3f
 {
 	TArray<FFinalSkinVertex> SkinnedVertices;
 	MeshComponent->GetCPUSkinnedVertices(SkinnedVertices, LODIndex);
-
-	OutVertices.Empty();
+	
 	OutVertices.AddUninitialized(SkinnedVertices.Num());
 	for (int32 i = 0; i < SkinnedVertices.Num(); ++i)
 	{
